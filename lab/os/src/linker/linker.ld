@@ -1,0 +1,1 @@
+OUPUT_ARCH(riscv)
