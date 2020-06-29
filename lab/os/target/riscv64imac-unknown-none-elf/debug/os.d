@@ -1,1 +1,1 @@
-/home/john/Documents/rCore_SoC_Dairy/lab/os/target/riscv64imac-unknown-none-elf/debug/os: /home/john/Documents/rCore_SoC_Dairy/lab/os/src/main.rs
+/home/john/Documents/rCore_SoC_Dairy/lab/os/target/riscv64imac-unknown-none-elf/debug/os: /home/john/Documents/rCore_SoC_Dairy/lab/os/src/asm/entry.asm /home/john/Documents/rCore_SoC_Dairy/lab/os/src/console.rs /home/john/Documents/rCore_SoC_Dairy/lab/os/src/lib.rs /home/john/Documents/rCore_SoC_Dairy/lab/os/src/main.rs /home/john/Documents/rCore_SoC_Dairy/lab/os/src/panic.rs /home/john/Documents/rCore_SoC_Dairy/lab/os/src/sbi.rs

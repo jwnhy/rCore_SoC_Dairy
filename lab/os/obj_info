@@ -1,0 +1,39 @@
+
+target/riscv64imac-unknown-none-elf/debug/os:	file format ELF64-riscv
+
+
+Disassembly of section .text:
+
+0000000080200000 kernel_start:
+80200000: 17 01 01 00                  	auipc	sp, 16
+80200004: 13 01 c1 01                  	addi	sp, sp, 28
+80200008: 97 00 00 00                  	auipc	ra, 0
+8020000c: e7 80 80 00                  	jalr	8(ra)
+
+0000000080200010 rust_main:
+80200010: 41 11                        	addi	sp, sp, -16
+80200012: 06 e4                        	sd	ra, 8(sp)
+80200014: 22 e0                        	sd	s0, 0(sp)
+80200016: 00 08                        	addi	s0, sp, 16
+80200018: 09 a0                        	j	2
+8020001a: 01 a0                        	j	0
+Sections:
+Idx Name          Size     VMA          Type
+  0               00000000 0000000000000000 
+  1 .text         0000001c 0000000080200000 TEXT 
+  2 bss           00010000 000000008020001c BSS
+  3 .debug_str    00000414 0000000000000000 
+  4 .debug_abbrev 00000113 0000000000000000 
+  5 .debug_info   00000510 0000000000000000 
+  6 .debug_aranges 00000040 0000000000000000 
+  7 .debug_ranges 00000030 0000000000000000 
+  8 .debug_macinfo 00000001 0000000000000000 
+  9 .debug_pubnames 000000a7 0000000000000000 
+ 10 .debug_pubtypes 00000308 0000000000000000 
+ 11 .debug_frame  00000068 0000000000000000 
+ 12 .debug_line   00000059 0000000000000000 
+ 13 .comment      00000012 0000000000000000 
+ 14 .symtab       000001f8 0000000000000000 
+ 15 .shstrtab     000000b8 0000000000000000 
+ 16 .strtab       000000a4 0000000000000000 
+
