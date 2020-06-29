@@ -110,7 +110,7 @@ OpenSBI 将自身放置在0x8000_0000，完成初始化后跳转到0x8020_0000�
 
 #### OpenSBI
 
-OpenSBI 和 BIOS 与 UEFI 一样，是属于 Firmware 级别的软件，会在启动时由 Bootloader 加载进入。这里的 OpenSBI 固件运行在 RISC-V 的最高权限模式 M-Mode 下，并且在将控制权转交给内核时会进入 RISC-V 为 OS 准备的 S-Mode 下，然后跳转到固定地址 0x8020_0000，具体可以参考[特权模式]()。
+OpenSBI 和 BIOS 与 UEFI 一样，是属于 Firmware 级别的软件，会在启动时由 Bootloader 加载进入。这里的 OpenSBI 固件运行在 RISC-V 的最高权限模式 M-Mode 下，并且在将控制权转交给内核时会进入 RISC-V 为 OS 准备的 S-Mode 下，然后跳转到固定地址 0x8020_0000，具体可以参考[特权模式](https://github.com/JohnWestonNull/rCore_SoC_Dairy/blob/master/pdf_doc/RISCV_%E7%89%B9%E6%9D%83%E6%A8%A1%E5%BC%8F.pdf)。
 
 接下来就是汇编入口，主要重要的事就是初始化栈
 
