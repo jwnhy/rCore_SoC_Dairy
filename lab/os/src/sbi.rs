@@ -22,6 +22,10 @@ pub fn shutdown() -> ! {
     unreachable!()
 }
 
+pub fn set_timer(time: usize) {
+    sbi_call(SBI_SET_TIMER, time, 0, 0);
+}
+
 #[inline(always)]
 fn sbi_call(which: usize, arg0: usize, arg1: usize, arg2: usize) -> usize {
     let ret;

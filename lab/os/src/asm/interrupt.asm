@@ -1,10 +1,10 @@
-.marco SAVE reg, offset
+.macro SAVE reg, offset
     sd  \reg, \offset * 8(sp)
 .endm
 
 .macro LOAD reg, offset
     ld  \reg, \offset * 8(sp)
-
+.endm
     .section .text
     .global __interrupt
 
@@ -60,7 +60,7 @@ __interrupt:
     mv      a0, sp
     csrr    a1, scause
     csrr    a2, stval
-    jal     # Here should be a handler
+    jal     handle_interrupt
 
 
     .global __restore
