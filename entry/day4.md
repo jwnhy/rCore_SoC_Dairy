@@ -89,8 +89,10 @@ pub struct Context {
 }
 ```
 
-在中断触发时，我们的**中断处理函数**会在栈上根据 `Context` 的**布局**依次存储好 `x0` - `x31` 等 32 个通用寄存器的值和两个 CSR 的值 [`sstatus` 与 `sepc`]。
+在中断触发时，我们的[**中断处理函数**](https://github.com/JohnWestonNull/rCore_SoC_Dairy/blob/master/lab/os/src/asm/interrupt.asm)会在栈上根据 `Context` 的**布局**依次存储好 `x0` - `x31` 等 32 个通用寄存器的值和两个 CSR 的值 [`sstatus` 与 `sepc`]。
 
-再将栈顶指针放到 `a0` 寄存器中，并且将 `scause` 与 `stval` 传到用 Rust 写的分派函数中。
+再将栈顶指针放到 `a0` 寄存器中，并且将 `scause` 与 `stval` 利用 `a1` 与 `a2` 寄存器传到用 Rust 写的分派函数中。
 
 > `scause` 与 `stval` 之所以不放到上下文中是因为这两者只是临时变量，不需要特意存储到栈上，只需要在分派时放到对应的参数位置即可。
+
+剩下的就是一些 *trivial* 的东西了，不在此赘述。
