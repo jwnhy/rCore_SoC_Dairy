@@ -8,3 +8,4 @@ pub mod console;
 pub mod sbi;
 pub mod panic;
 pub mod interrupt;
+pub mod memory;

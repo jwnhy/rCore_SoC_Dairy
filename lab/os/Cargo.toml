@@ -14,3 +14,9 @@ panic = "abort"
 
 [dependencies]
 riscv = { git = "https://github.com/rcore-os/riscv", features = ["inline-asm"] }
+bit_field = "0.10.0"
+bitflags = "1.2.1"
+
+[dependencies.lazy_static]
+version = "1.4.0"
+features = ["spin_no_std"]
