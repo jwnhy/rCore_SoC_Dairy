@@ -57,7 +57,7 @@ RISC-V 有一些 CSR 寄存器 （Control and Status Registers） 用来保存�
 
 ###### 进入与退出中断指令
 
-- `ecall` 系统调用指令，可以参考 [day3](https://github.com/JohnWestonNull/rCore_SoC_Dairy/blob/master/entry/day3.md) 中关于系统调用的部分。
+- `ecall` 系统调用指令，可以参考 [day3中关于系统调用的部分。](https://github.com/JohnWestonNull/rCore_SoC_Dairy/blob/master/entry/day3.md#opensbi-%E6%8F%90%E4%BE%9B%E7%9A%84%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8) 
 - `sret` 与 `mret`，从 S-Mode 返回 U-Mode 与 从 M-Mode 返回 S-Mode。
 - `ebreak`，触发一个断点。
 
@@ -96,9 +96,12 @@ pub struct Context {
 > `scause` 与 `stval` 之所以不放到上下文中是因为这两者只是临时变量，不需要特意存储到栈上，只需要在分派时放到对应的参数位置即可。
 
 剩下的就是一些 *trivial* 的东西了，不在此赘述。
+<<<<<<< HEAD
 
 
 
 ---
 
 啊，准备先搞 lab3 再搞 lab2 了，lab2 里面把动态内存放在 bss 区的方式感觉不是很漂亮，所以准备先实现页表再根据类似    blog_os 的方法实现动态内存分配。
+=======
+>>>>>>> 073cf008f2a86dfcae73ea8b77f8f153e02407b7
