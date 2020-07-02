@@ -7,6 +7,7 @@ This is the self-learning dairy of OS Tutorial Summer of Code hosted by THU.
 - [**day4**-lab1完成](https://github.com/JohnWestonNull/rCore_SoC_Dairy/blob/master/entry/day4.md)
 
 - [day5](https://github.com/JohnWestonNull/rCore_SoC_Dairy/blob/master/entry/day5.md)
+- [day6](https://github.com/JohnWestonNull/rCore_SoC_Dairy/blob/master/entry/day6.md)
 
   
 
