@@ -42,15 +42,36 @@ pub struct PageTableEntry(usize);
 
 impl PageTableEntry {
     pub fn new(page_number: PhysicalPageNumber, flags: Flags) -> Self {
-        Self (
+        Self(
             *0usize.set_bits(..8, flags.bits() as usize)
                 .set_bits(10..54, page_number.into()),
         )
     }
+
     pub fn page_number(&self) -> PhysicalPageNumber {
         PhysicalPageNumber::from(self.0.get_bits(10..54))
     }
+
     pub fn address(&self) -> PhysicalAddress {
         PhysicalAddress::from(self.page_number())
+    }
+
+    pub fn flags(&self) -> Flags {
+        unsafe {Flags::from_bits_unchecked(self.0.get_bits(..8) as u8)}
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.0 == 0
+    }
+}
+
+impl core::fmt::Debug for PageTableEntry {
+    fn fmt(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+        formatter
+            .debug_struct("PageTableEntry")
+            .field("value", &self.0)
+            .field("page_number", &self.page_number())
+            .field("flags", &self.flags())
+            .finish()
     }
 }

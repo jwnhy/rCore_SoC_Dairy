@@ -16,7 +16,7 @@ _start:
     or      t0, t0, t1
     # PAGE_TABLE = t0
     csrw    satp, t0
-    sfece.vma
+    sfence.vma
 
     # sp[12:32) = boot_stack_top[12:32), sp[0:12) = 0, sign extended to 64 bit
     lui     sp, %hi(boot_stack_top)
@@ -41,9 +41,9 @@ boot_stack_top:
 boot_page_table:
     .quad 0
     .quad 0
-    # 0x8000_0000[VPN2] = (0x8000_0000 / 4096)[18:44) = 0x10 = 2 (Second Entry)
+    # 0x8000_0000[VPN2] = (0x8000_0000 >> 30) = 0x10 = 2 (Second Entry)
     .quad (0x80000 << 10) | 0xcf    # entry: 0x8000_0000 -> 0x8000_0000
     .zero 507 * 8
-    # 0xffff_ffff_8000_0000[VPN2] = (0xffff_ffff_8000_0000 / 4096)[18:44) >> 18 = 0x3fffffffe = 510
+    # 0xffff_ffff_8000_0000[VPN2] = (0xffff_ffff_8000_0000 >> 30)= 510
     .quad (0x80000 << 10) | 0xcf    # entry: 0xffff_ffff_8000_0000 -> 0x8000_0000
     .quad 0
