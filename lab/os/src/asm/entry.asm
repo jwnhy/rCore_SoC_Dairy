@@ -28,12 +28,15 @@ _start:
     # rust_main()
     jr      t0
 
+
+
+    .section .bss.stack
+    .global boot_stack
 boot_stack:
     .space 4096 * 16
     .global boot_stack_top
 
 boot_stack_top:
-
     .section .data
     .align 12
 

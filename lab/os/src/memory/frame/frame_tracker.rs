@@ -1,6 +1,7 @@
 use crate::memory::address::{PhysicalAddress, PhysicalPageNumber};
-
-pub struct FrameTracker(PhysicalAddress);
+use crate::memory::frame::allocator::FRAME_ALLOCATOR;
+#[derive(Debug)]
+pub struct FrameTracker(pub PhysicalAddress);
 
 impl FrameTracker {
     pub fn address(&self) -> PhysicalAddress {
@@ -14,6 +15,6 @@ impl FrameTracker {
 
 impl Drop for FrameTracker {
     fn drop(&mut self) {
-
+        FRAME_ALLOCATOR.lock().dealloc(self)
     }
 }

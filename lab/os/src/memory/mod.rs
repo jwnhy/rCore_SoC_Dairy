@@ -1,9 +1,11 @@
+mod range;
 mod heap;
-mod address;
+pub mod address;
 mod config;
-mod mapping;
-mod frame;
+pub mod mapping;
+pub mod frame;
 
+pub type MemoryResult<T> = Result<T, &'static str>;
 pub fn init(){
     heap::init();
 }

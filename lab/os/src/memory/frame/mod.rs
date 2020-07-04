@@ -1,2 +1,2 @@
-mod allocator;
-mod frame_tracker;
+pub mod allocator;
+pub mod frame_tracker;

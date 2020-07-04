@@ -43,7 +43,8 @@ pub struct PageTableEntry(usize);
 impl PageTableEntry {
     pub fn new(page_number: PhysicalPageNumber, flags: Flags) -> Self {
         Self(
-            *0usize.set_bits(..8, flags.bits() as usize)
+            *0usize
+                .set_bits(..8, flags.bits() as usize)
                 .set_bits(10..54, page_number.into()),
         )
     }
@@ -62,6 +63,13 @@ impl PageTableEntry {
 
     pub fn is_empty(&self) -> bool {
         self.0 == 0
+    }
+
+    pub fn has_next_level(&self) -> bool {
+        let flags = self.flags();
+        !(flags.contains(Flags::READABLE)
+            || flags.contains(Flags::WRITABLE)
+            || flags.contains(Flags::EXECUTABLE))
     }
 }
 
