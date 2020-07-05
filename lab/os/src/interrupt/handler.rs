@@ -1,7 +1,9 @@
-use super::context::Context;
+use riscv::register::scause::{Exception, Interrupt, Scause, Trap};
 use riscv::register::stvec;
-use riscv::register::scause::{Scause, Trap, Exception, Interrupt};
+
 use crate::interrupt::timer;
+
+use super::context::Context;
 
 global_asm!(include_str!("../asm/interrupt.asm"));
 

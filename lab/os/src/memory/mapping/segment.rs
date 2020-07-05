@@ -14,7 +14,7 @@ pub struct Segment {
 }
 
 impl Segment {
-    pub fn iter_mapped(&self) -> Option<impl Iterator<Item = PhysicalPageNumber>> {
+    pub fn iter_mapped(&self) -> Option<impl Iterator<Item=PhysicalPageNumber>> {
         match self.map_type {
             MapType::Linear => Some(self.page_range.iter().map(PhysicalPageNumber::from)),
             MapType::Framed => None

@@ -1,14 +1,13 @@
-use crate::memory::mapping::page_table::{PageTableTracker, PageTable};
-use alloc::vec::Vec;
 use alloc::vec;
-use crate::memory::address::{PhysicalPageNumber, VirtualPageNumber, PhysicalAddress, VirtualAddress};
-use crate::memory::MemoryResult;
+use alloc::vec::Vec;
+use crate::memory::address::{PhysicalAddress, PhysicalPageNumber, VirtualAddress, VirtualPageNumber};
 use crate::memory::frame::allocator::FRAME_ALLOCATOR;
-use crate::memory::mapping::page_table_entry::PageTableEntry;
-use crate::memory::mapping::Flags;
 use crate::memory::frame::frame_tracker::FrameTracker;
+use crate::memory::mapping::Flags;
+use crate::memory::mapping::page_table::{PageTable, PageTableTracker};
+use crate::memory::mapping::page_table_entry::PageTableEntry;
 use crate::memory::mapping::segment::Segment;
-use riscv::register::scause::Exception::Breakpoint;
+use crate::memory::MemoryResult;
 
 #[derive(Default, Debug)]
 pub struct Mapping {
@@ -70,7 +69,7 @@ impl Mapping {
         }
     }
 
-    pub fn lookup(root_ppn: Option<usize>, va: VirtualAddress) -> Option<PhysicalAddress> {
+    pub fn lookup(root_ppn: Option<usize>, va: VirtualAddress) -> Option<(PhysicalAddress, PageTableEntry)> {
         let mut current_ppn;
         unsafe {
             llvm_asm!("csrr $0, satp" : "=r"(current_ppn) ::: "volatile");
@@ -91,13 +90,11 @@ impl Mapping {
             if entry.has_next_level() {
                 length -= 9;
                 entry = &mut entry.get_next_table().entries[*vpn_slice];
-            } else {
-                break;
             }
         }
         let base = PhysicalAddress::from(entry.page_number()).0;
         let offset = va.0 & ((1 << length) - 1);
-        Some(PhysicalAddress(base + offset))
+        Some((PhysicalAddress(base + offset), *entry))
     }
 
     pub fn flush(&self) {

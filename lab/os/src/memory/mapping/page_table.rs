@@ -1,7 +1,7 @@
-use crate::memory::mapping::page_table_entry::PageTableEntry;
-use crate::memory::config::{PAGE_SIZE, PAGE_ENTRY_SIZE};
-use crate::memory::frame::frame_tracker::FrameTracker;
 use crate::memory::address::PhysicalPageNumber;
+use crate::memory::config::{PAGE_ENTRY_SIZE, PAGE_SIZE};
+use crate::memory::frame::frame_tracker::FrameTracker;
+use crate::memory::mapping::page_table_entry::PageTableEntry;
 
 #[repr(C)]
 pub struct PageTable {
@@ -14,6 +14,7 @@ impl PageTable {
         self.entries = [Default::default(); PAGE_SIZE / PAGE_ENTRY_SIZE]
     }
 }
+
 #[derive(Debug)]
 pub struct PageTableTracker(pub FrameTracker);
 

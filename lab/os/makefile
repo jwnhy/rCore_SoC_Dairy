@@ -1,7 +1,8 @@
-TARGET      := riscv64imac-unknown-none-elf
-MODE        := debug
-KERNEL_FILE := target/$(TARGET)/$(MODE)/os
-BIN_FILE    := target/$(TARGET)/$(MODE)/kernel.bin
+TARGET      	:= riscv64imac-unknown-none-elf
+MODE        	:= debug
+KERNEL_FILE 	:= target/$(TARGET)/$(MODE)/os
+BIN_FILE    	:= target/$(TARGET)/$(MODE)/kernel.bin
+TEST_BIN_FILE	:= target/$(TARGET)/$(MODE)/test_kernel.bin
 
 OBJDUMP     := rust-objdump --arch-name=riscv64
 OBJCOPY     := rust-objcopy --binary-architecture=riscv64
@@ -10,14 +11,21 @@ OBJCOPY     := rust-objcopy --binary-architecture=riscv64
 
 build: $(BIN_FILE)
 
+test: $(TEST_BIN_FILE)
+
 doc:
 	@cargo doc --document-private-items
 
 kernel:
 	@cargo build
 
+test_kernel:
+	@cargo test --no-run
+
 $(BIN_FILE): kernel
 	$(OBJCOPY) $(KERNEL_FILE) --strip-all -O binary $(BIN_FILE)
+
+
 
 asm:
 	@$(OBJDUMP) -d $(KERNEL_FILE) | less

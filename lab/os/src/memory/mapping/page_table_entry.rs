@@ -1,6 +1,7 @@
-use crate::memory::address::*;
 use bit_field::BitField;
 use bitflags::*;
+
+use crate::memory::address::*;
 
 bitflags! {
     #[derive(Default)]
@@ -58,7 +59,7 @@ impl PageTableEntry {
     }
 
     pub fn flags(&self) -> Flags {
-        unsafe {Flags::from_bits_unchecked(self.0.get_bits(..8) as u8)}
+        unsafe { Flags::from_bits_unchecked(self.0.get_bits(..8) as u8) }
     }
 
     pub fn is_empty(&self) -> bool {

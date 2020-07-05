@@ -1,5 +1,6 @@
-use super::Allocator;
 use alloc::{vec, vec::Vec};
+
+use super::Allocator;
 
 pub struct StackedAllocator {
     list: Vec<(usize, usize)>
@@ -17,7 +18,7 @@ impl Allocator for StackedAllocator {
             if end - start > 1 {
                 self.list.push((start + 1, end));
             }
-            return Some(start)
+            return Some(start);
         }
         None
     }

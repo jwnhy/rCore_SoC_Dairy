@@ -1,12 +1,13 @@
-mod stacked_allocator;
-
-use spin::Mutex;
 use lazy_static::lazy_static;
+use spin::Mutex;
+
+use crate::memory::address::{PhysicalAddress, PhysicalPageNumber};
 use crate::memory::config::{KERNEL_END_ADDRESS, MEMORY_END_ADDRESS};
-use crate::memory::address::{PhysicalPageNumber, PhysicalAddress};
-use crate::memory::range::Range;
 use crate::memory::frame::frame_tracker::FrameTracker;
 use crate::memory::MemoryResult;
+use crate::memory::range::Range;
+
+mod stacked_allocator;
 
 type AllocatorImpl = stacked_allocator::StackedAllocator;
 

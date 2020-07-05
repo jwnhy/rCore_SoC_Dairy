@@ -4,7 +4,7 @@ pub struct Range<T: From<usize> + Into<usize> + Copy> {
     pub end: T,
 }
 
-impl <T: From<usize> + Into<usize> + Copy, U: Into<T>> From<core::ops::Range<U>> for Range<T> {
+impl<T: From<usize> + Into<usize> + Copy, U: Into<T>> From<core::ops::Range<U>> for Range<T> {
     fn from(range: core::ops::Range<U>) -> Self {
         Self {
             start: range.start.into(),
@@ -18,7 +18,7 @@ impl<T: From<usize> + Into<usize> + Copy> Range<T> {
         self.start.into() < other.end.into() && self.end.into() > other.start.into()
     }
 
-    pub fn iter(&self) -> impl Iterator<Item = T> {
+    pub fn iter(&self) -> impl Iterator<Item=T> {
         (self.start.into()..self.end.into()).map(T::from)
     }
 

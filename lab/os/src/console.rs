@@ -1,5 +1,6 @@
-use crate::sbi::*;
 use core::fmt::{self, Write};
+
+use crate::sbi::*;
 
 struct Stdout;
 
@@ -11,6 +12,7 @@ impl Write for Stdout {
         Ok(())
     }
 }
+
 pub fn print(args: fmt::Arguments) {
     Stdout.write_fmt(args).unwrap()
 }

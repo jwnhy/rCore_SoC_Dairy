@@ -1,23 +1,21 @@
-mod memory_set;
+use alloc::vec;
+use alloc::vec::Vec;
+
+pub use page_table_entry::Flags;
+
+use crate::memory::address::{VirtualAddress};
+use crate::memory::config::{KERNEL_END_ADDRESS, MEMORY_END_ADDRESS};
+use crate::memory::mapping::mapping::Mapping;
+use crate::memory::mapping::memory_set::MemorySet;
+use crate::memory::mapping::segment::{MapType, Segment};
+use crate::memory::MemoryResult;
+use crate::memory::range::Range;
+
+pub mod memory_set;
 pub mod mapping;
 mod page_table;
 mod page_table_entry;
 pub(crate) mod segment;
-
-pub use page_table_entry::Flags;
-
-use crate::memory::MemoryResult;
-use crate::memory::mapping::memory_set::MemorySet;
-use crate::memory::mapping::segment::{MapType, Segment};
-use crate::memory::range::Range;
-use crate::memory::address::{VirtualAddress, VirtualPageNumber};
-use crate::memory::config::{MEMORY_END_ADDRESS, KERNEL_END_ADDRESS};
-use crate::memory::mapping::mapping::Mapping;
-use crate::memory::frame::frame_tracker::FrameTracker;
-use alloc::boxed::Box;
-use alloc::vec::Vec;
-use alloc::vec;
-
 
 pub fn new_kernel() -> MemoryResult<MemorySet> {
     extern "C" {
@@ -68,10 +66,5 @@ pub fn new_kernel() -> MemoryResult<MemorySet> {
 
     let mut mapping = Mapping::new()?;
     let mut allocated_pairs = Vec::new();
-
-    for segment in segments.iter() {
-        let new_pair = mapping.map(segment);
-        allocated_pairs.extend(new_pair?)
-    }
-    Ok(MemorySet{mapping, segments, allocated_pairs})
+    Ok(MemorySet { mapping, segments, allocated_pairs })
 }

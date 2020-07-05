@@ -1,5 +1,6 @@
-use super::config::{KERNEL_MAP_OFFSET, PAGE_SIZE};
 use bit_field::BitField;
+
+use super::config::{KERNEL_MAP_OFFSET, PAGE_SIZE};
 
 #[repr(C)]
 #[derive(Copy, Clone, Debug, Default, Eq, PartialEq, Ord, PartialOrd, Hash)]
@@ -17,13 +18,13 @@ pub struct VirtualPageNumber(pub usize);
 #[derive(Copy, Clone, Debug, Default, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub struct PhysicalPageNumber(pub usize);
 
-impl <T> From<*const T> for VirtualAddress {
+impl<T> From<*const T> for VirtualAddress {
     fn from(pointer: *const T) -> Self {
         Self(pointer as usize)
     }
 }
 
-impl <T> From<*mut T> for VirtualAddress {
+impl<T> From<*mut T> for VirtualAddress {
     fn from(pointer: *mut T) -> Self {
         Self(pointer as usize)
     }
@@ -35,24 +36,28 @@ impl From<PhysicalPageNumber> for VirtualPageNumber {
         Self(ppn.0 + KERNEL_MAP_OFFSET / PAGE_SIZE)
     }
 }
+
 /// 虚实页号之间的线性映射
 impl From<VirtualPageNumber> for PhysicalPageNumber {
     fn from(vpn: VirtualPageNumber) -> Self {
         Self(vpn.0 - KERNEL_MAP_OFFSET / PAGE_SIZE)
     }
 }
+
 /// 虚实地址之间的线性映射
 impl From<PhysicalAddress> for VirtualAddress {
     fn from(pa: PhysicalAddress) -> Self {
         Self(pa.0 + KERNEL_MAP_OFFSET)
     }
 }
+
 /// 虚实地址之间的线性映射
 impl From<VirtualAddress> for PhysicalAddress {
     fn from(va: VirtualAddress) -> Self {
         Self(va.0 - KERNEL_MAP_OFFSET)
     }
 }
+
 impl VirtualAddress {
     /// 从虚拟地址取得某类型的 &mut 引用
     pub fn deref<T>(self) -> &'static mut T {
@@ -63,6 +68,7 @@ impl VirtualAddress {
         self.0 % PAGE_SIZE
     }
 }
+
 impl PhysicalAddress {
     /// 从物理地址经过线性映射取得 &mut 引用
     pub fn deref_kernel<T>(self) -> &'static mut T {
@@ -73,12 +79,14 @@ impl PhysicalAddress {
         self.0 % PAGE_SIZE
     }
 }
+
 impl VirtualPageNumber {
     /// 从虚拟地址取得页面
     pub fn deref(self) -> &'static mut [u8; PAGE_SIZE] {
         VirtualAddress::from(self).deref()
     }
 }
+
 impl PhysicalPageNumber {
     /// 从物理地址经过线性映射取得页面
     pub fn deref_kernel(self) -> &'static mut [u8; PAGE_SIZE] {

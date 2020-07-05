@@ -2,24 +2,19 @@
 #![no_main]
 #![feature(llvm_asm)]
 #![feature(global_asm)]
+
 extern crate alloc;
-global_asm!(include_str!("asm/entry.asm"));
 
 use os::interrupt;
 use os::memory;
 use os::println;
+global_asm!(include_str!("asm/entry.asm"));
 
 #[no_mangle]
 pub extern "C" fn rust_main() -> ! {
     interrupt::init();
     memory::init();
 
-    let remap = memory::mapping::new_kernel().unwrap().flush();
-
-    use crate::memory::address::{VirtualAddress, PhysicalAddress};
-    use os::memory::mapping::mapping::Mapping;
-
-    println!("kernel remapped");
     unsafe {
         llvm_asm!("ebreak"::::"volatile");
     }
@@ -52,5 +47,5 @@ pub extern "C" fn rust_main() -> ! {
         println!("{} and {}", frame_0.address(), frame_1.address());
     }
 
-    loop{}
+    loop {}
 }
