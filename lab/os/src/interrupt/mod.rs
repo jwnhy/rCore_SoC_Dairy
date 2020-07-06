@@ -1,6 +1,6 @@
 mod timer;
 mod handler;
-mod context;
+pub mod context;
 
 pub fn init() {
     handler::init();

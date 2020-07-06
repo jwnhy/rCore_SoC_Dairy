@@ -1,5 +1,5 @@
 
-mod range;
+pub mod range;
 mod heap;
 pub mod address;
 mod config;

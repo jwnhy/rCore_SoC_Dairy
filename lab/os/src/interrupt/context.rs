@@ -9,3 +9,9 @@ pub struct Context {
     // Status registers, like enable/disable of interrupt
     pub sepc: usize,            // Previous program counter
 }
+
+impl Context {
+    pub fn sp(&self) -> usize {
+        self.x[2]
+    }
+}

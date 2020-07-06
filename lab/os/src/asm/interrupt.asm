@@ -66,6 +66,8 @@ __interrupt:
 
     .global __restore
 __restore:
+    # stack = &context
+    mv      sp, a0
     # sstatus = stack[32]
     LOAD    s1, 32
     csrw    sstatus, s1
