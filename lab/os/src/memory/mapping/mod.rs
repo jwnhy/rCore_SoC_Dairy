@@ -27,14 +27,14 @@ pub fn new_kernel() -> MemoryResult<MemorySet> {
     let segments = vec![
         Segment {
             map_type: MapType::Linear,
-            page_range: Range::<VirtualAddress>::from(
+            range: Range::<VirtualAddress>::from(
                 (text_start as usize)..(rodata_start as usize),
             ).into(),
             flags: Flags::VALID | Flags::READABLE | Flags::EXECUTABLE,
         },
         Segment {
             map_type: MapType::Linear,
-            page_range: Range::<VirtualAddress>::from(
+            range: Range::<VirtualAddress>::from(
                 (rodata_start as usize)..(data_start as usize),
             )
                 .into(),
@@ -42,7 +42,7 @@ pub fn new_kernel() -> MemoryResult<MemorySet> {
         },
         Segment {
             map_type: MapType::Linear,
-            page_range: Range::<VirtualAddress>::from(
+            range: Range::<VirtualAddress>::from(
                 (data_start as usize)..(bss_start as usize),
             )
                 .into(),
@@ -50,14 +50,14 @@ pub fn new_kernel() -> MemoryResult<MemorySet> {
         },
         Segment {
             map_type: MapType::Linear,
-            page_range: Range::from(
+            range: Range::from(
                 VirtualAddress::from(bss_start as usize)..*KERNEL_END_ADDRESS,
             ),
             flags: Flags::VALID | Flags::READABLE | Flags::WRITABLE,
         },
         Segment {
             map_type: MapType::Linear,
-            page_range: Range::from(
+            range: Range::from(
                 *KERNEL_END_ADDRESS..VirtualAddress::from(MEMORY_END_ADDRESS),
             ),
             flags: Flags::VALID | Flags::READABLE | Flags::WRITABLE,

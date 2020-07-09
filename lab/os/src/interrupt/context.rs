@@ -14,13 +14,11 @@ pub struct Context {
 }
 
 impl Default for Context {
-    fn default() -> Self {
-        fn default() -> Self {
+    fn default() -> Context {
             unsafe {
-                zeroed::<Self>()
+                zeroed()
             }
         }
-    }
 }
 
 impl Context {

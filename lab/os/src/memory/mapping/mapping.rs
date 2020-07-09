@@ -8,6 +8,7 @@ use crate::memory::mapping::page_table::{PageTable, PageTableTracker};
 use crate::memory::mapping::page_table_entry::PageTableEntry;
 use crate::memory::mapping::segment::Segment;
 use crate::memory::MemoryResult;
+use bitflags::_core::ptr::slice_from_raw_parts_mut;
 
 #[derive(Default, Debug)]
 pub struct Mapping {
@@ -52,25 +53,35 @@ impl Mapping {
         Ok(())
     }
 
-    pub fn map(&mut self, segment: &Segment) -> MemoryResult<Vec<(VirtualPageNumber, FrameTracker)>> {
+    pub fn map(&mut self, segment: &Segment, init_data: Option<&[u8]>) -> MemoryResult<Vec<(VirtualPageNumber, FrameTracker)>> {
         if let Some(ppn_iter) = segment.iter_mapped() {
-            for (vpn, ppn) in segment.page_range.iter().zip(ppn_iter) {
+            for (vpn, ppn) in segment.page_range().iter().zip(ppn_iter) {
                 self.map_one(vpn, ppn, segment.flags)?;
+            }
+            if let Some(data) = init_data {
+                unsafe{
+                    // 页表中始终保留着内核区域的映射，因此可以直接用虚拟地址访问
+                    (&mut *slice_from_raw_parts_mut(*segment.range.start.deref(), data.len()))
+                        .copy_from_slice(data);
+                }
             }
             Ok(vec![])
         } else {
             let mut allocated_pairs = vec![];
-            for vpn in segment.page_range.iter() {
+            for vpn in segment.page_range().iter() {
                 let frame: FrameTracker = FRAME_ALLOCATOR.lock().alloc()?;
                 self.map_one(vpn, frame.page_number(), segment.flags)?;
                 allocated_pairs.push((vpn, frame));
+            }
+            if let Some(data) = init_data {
+                todo!()
             }
             Ok(allocated_pairs)
         }
     }
 
     pub fn lookup(root_ppn: Option<usize>, va: VirtualAddress) -> Option<(PhysicalAddress, PageTableEntry)> {
-        let mut current_ppn;
+        let mut current_ppn = 0;
         unsafe {
             llvm_asm!("csrr $0, satp" : "=r"(current_ppn) ::: "volatile");
             current_ppn ^= 8 << 60;

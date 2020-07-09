@@ -7,8 +7,7 @@ use crate::println;
 pub fn kernel_memory_check(memory_set: &MemorySet) {
     for segment in &memory_set.segments {
         let flags = segment.flags;
-        for vpn in segment.page_range.iter() {
-            let va = VirtualAddress::from(vpn);
+        for va in segment.range.iter() {
             let (pa, entry) = Mapping::lookup(Some(memory_set.mapping.root_ppn.0), va).unwrap();
             assert_eq!(pa, PhysicalAddress::from(va));
             assert_eq!(entry.flags(), flags);

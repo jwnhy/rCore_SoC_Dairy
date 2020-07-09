@@ -1,8 +1,8 @@
 
 pub mod range;
-mod heap;
+pub mod heap;
 pub mod address;
-mod config;
+pub mod config;
 pub mod mapping;
 pub mod frame;
 use crate::test::kernel_memory_check::kernel_memory_check;

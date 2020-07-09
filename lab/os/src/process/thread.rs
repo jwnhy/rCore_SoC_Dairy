@@ -7,6 +7,7 @@ use crate::interrupt::context::Context;
 use crate::process::process::Process;
 use crate::process::kernel_stack::{KernelStack, KERNEL_STACK};
 use core::mem::size_of;
+use crate::memory::MemoryResult;
 
 
 pub type ThreadID = isize;
@@ -23,7 +24,7 @@ pub struct Thread {
 
 pub struct ThreadInner {
     pub context: Option<Context>,
-    pub sleeping: bool,
+    pub sleeping: bool,VirtualAddress
 }
 
 impl Thread {
@@ -43,5 +44,18 @@ impl Thread {
             unsafe { *context = parked_frame }
             context
         }
+    }
+
+    pub fn park(&self, context: Context) {
+        assert!(self.inner().context.is_none());
+        self.inner().context.replace(context);
+    }
+
+    pub fn new(
+        process: Arc<RwLock<Process>>,
+        entry_point: usize,
+        arguments: Option<[&usize]>,
+    ) -> MemoryResult<Arc<Thread>> {
+        let stack = process.write()
     }
 }
