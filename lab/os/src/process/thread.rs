@@ -8,12 +8,13 @@ use crate::process::process::Process;
 use crate::process::kernel_stack::{KernelStack, KERNEL_STACK};
 use core::mem::size_of;
 use crate::memory::MemoryResult;
+use crate::process::config::STACK_SIZE;
+use crate::memory::mapping::Flags;
+use core::hash::{Hash, Hasher};
 
 
 pub type ThreadID = isize;
-lazy_static! {
-    pub static ref THREAD_COUNTER: Mutex<ThreadID> = Mutex::new(0);
-}
+static mut THREAD_COUNTER: ThreadID = 0;
 
 pub struct Thread {
     pub id: ThreadID,
@@ -24,7 +25,7 @@ pub struct Thread {
 
 pub struct ThreadInner {
     pub context: Option<Context>,
-    pub sleeping: bool,VirtualAddress
+    pub sleeping: bool,
 }
 
 impl Thread {
@@ -54,8 +55,43 @@ impl Thread {
     pub fn new(
         process: Arc<RwLock<Process>>,
         entry_point: usize,
-        arguments: Option<[&usize]>,
+        arguments: Option<&[usize]>,
     ) -> MemoryResult<Arc<Thread>> {
-        let stack = process.write()
+        let stack = process.write().alloc_page_range(STACK_SIZE, Flags::READABLE | Flags::WRITALBE)?;
+        let context = Context::new(
+            stack.end.into(),
+            entry_point,
+            arguments,
+            process.read().is_user
+        );
+        let thread = Arc::new(Thread {
+            id: unsafe {
+                THREAD_COUNTER += 1;
+                THREAD_COUNTER
+            },
+            stack,
+            process,
+            inner: Mutex::new(
+                ThreadInner {
+                    context: Some(context),
+                    sleeping: false,
+                }
+            )
+        });
+        Ok(thread)
+    }
+}
+
+impl PartialEq for Thread {
+    fn eq(&self, other: &Self) -> bool {
+        self.id == other.id
+    }
+}
+
+impl Eq for Thread {}
+
+impl Hash for Thread {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        state.write_isize(self.id);
     }
 }
