@@ -7,7 +7,7 @@ use crate::memory::range::Range;
 use crate::memory::address::VirtualAddress;
 use crate::memory::config::PAGE_SIZE;
 use crate::memory::mapping::segment::{Segment, MapType};
-
+#[derive(Debug)]
 pub struct Process {
     pub is_user: bool,
     pub memory_set: MemorySet,
@@ -38,7 +38,7 @@ impl Process {
         {
             map_type: MapType::Framed,
             range,
-            flags: flags|Flags::user(self.is_user),
+            flags: flags | Flags::user(self.is_user),
         }
         ,None)?;
         Ok(Range::from(range.start..(range.start+size)))

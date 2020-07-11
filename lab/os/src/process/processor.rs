@@ -1,7 +1,15 @@
-use lazy_static::lazy_static;
 use alloc::sync::Arc;
+use core::cell::UnsafeCell;
+
+use hashbrown::HashSet;
+use lazy_static::lazy_static;
+use super::unsafe_wrapper::UnsafeWrapper;
+
+use crate::interrupt::context::Context;
+use crate::process::scheduler::{Scheduler, SchedulerImpl};
 use crate::process::thread::Thread;
-use crate::process::scheduler::SchedulerImpl;
+use crate::memory::mapping::new_kernel;
+
 lazy_static! {
     /// 全局的 [`Processor`]
     pub static ref PROCESSOR: UnsafeWrapper<Processor> = Default::default();
@@ -11,7 +19,8 @@ lazy_static! {
 #[derive(Default)]
 pub struct Processor {
     current_thread: Option<Arc<Thread>>,
-    scheduler: SchedulerImpl<Arc<Thread>>
+    scheduler: SchedulerImpl<Arc<Thread>>,
+    sleeping_threads: HashSet<Arc<Thread>>,
 }
 
 impl Processor {
@@ -19,10 +28,54 @@ impl Processor {
         extern "C" {
             fn __restore(context: usize);
         }
-        let context = self.current_thread().run();
-        unsafe {
-            __restore(context as usize);
+        if let Some(thread) = &self.current_thread {
+            let context = thread.prepare();
+            unsafe {
+                __restore(context as usize);
+            }
         }
-        unreachable!()
+        panic!("no thread to run, shutting down");
     }
+
+    pub fn tick(&mut self, context: &mut Context) -> *mut Context {
+        if let Some(next_thread) = self.scheduler.get_next() {
+            if next_thread == *self.current_thread.as_ref().unwrap() {
+                // 没有更换线程，直接返回 Context
+                context
+            } else {
+                // 准备下一个线程
+                let next_context = next_thread.prepare();
+                print!("preparing {} ", next_thread.id);
+                let current_thread = self.current_thread.replace(next_thread).unwrap();
+                println!("parking {}", current_thread.id);
+
+                // 储存当前线程 Context
+                current_thread.park(*context);
+                // 返回下一个线程的 Context
+                next_context
+            }
+        } else {
+            panic!("all threads terminated, shutting down");
+        }
+    }
+    pub fn add_thread(&mut self, thread: Arc<Thread>) {
+        if self.current_thread.is_none() {
+            self.current_thread = Some(thread.clone());
+        }
+        self.scheduler.add_thread(thread, 0);
+    }
+
+    // pub fn prepare_next_thread(&mut self) -> *mut Context {
+    //     loop {
+    //         if let Some(next_thread) = self.scheduler.get_next() {
+    //             let context = next_thread.prepare();
+    //             self.current_thread = Some(next_thread)
+    //             return context;
+    //         } else {
+    //             if self.sleeping_threads.is_empty() {
+    //                 panic!()
+    //             }
+    //         }
+    //     }
+    // }
 }

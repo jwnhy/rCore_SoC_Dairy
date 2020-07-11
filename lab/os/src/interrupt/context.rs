@@ -4,7 +4,7 @@ use core::mem::zeroed;
 use riscv::register::sstatus::SPP::{User, Supervisor};
 
 #[repr(C)]
-#[derive(Debug)]
+#[derive(Clone, Copy, Debug)]
 pub struct Context {
     pub x: [usize; 32],
     // 32 General Purpose Register
@@ -56,7 +56,7 @@ impl Context {
 
         context.set_sp(stack_top);
         if let Some(arguments) = arguments {
-            context.set_arguments(arguments)
+            context.set_arguments(arguments);
         }
         context.sepc = entry_point;
         if is_user {

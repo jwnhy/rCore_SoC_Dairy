@@ -47,8 +47,7 @@ impl Mapping {
     fn map_one(&mut self, vpn: VirtualPageNumber, ppn: PhysicalPageNumber, flags: Flags) -> MemoryResult<()> {
         let entry = self.find_entry(vpn)?;
         assert!(entry.is_empty(), "virtual address is already mapped");
-        *entry = PageTableEntry::new(ppn, flags);
-
+        *entry = PageTableEntry::new(ppn, flags | Flags::VALID);
         //println!("{:x?}", Self::lookup(Some(self.root_ppn.0),VirtualAddress::from(vpn)).unwrap());
         Ok(())
     }
@@ -57,6 +56,7 @@ impl Mapping {
         if let Some(ppn_iter) = segment.iter_mapped() {
             for (vpn, ppn) in segment.page_range().iter().zip(ppn_iter) {
                 self.map_one(vpn, ppn, segment.flags)?;
+                // println!("{:x?} {:x?}", vpn, ppn);
             }
             if let Some(data) = init_data {
                 unsafe{
@@ -69,8 +69,9 @@ impl Mapping {
         } else {
             let mut allocated_pairs = vec![];
             for vpn in segment.page_range().iter() {
-                let frame: FrameTracker = FRAME_ALLOCATOR.lock().alloc()?;
+                let mut frame: FrameTracker = FRAME_ALLOCATOR.lock().alloc()?;
                 self.map_one(vpn, frame.page_number(), segment.flags)?;
+                frame.fill(0);
                 allocated_pairs.push((vpn, frame));
             }
             if let Some(data) = init_data {
@@ -90,6 +91,7 @@ impl Mapping {
 
         let root_table: &PageTable =
             PhysicalAddress::from(PhysicalPageNumber(current_ppn)).deref_kernel();
+        // print!("{:x?}",root_table as *const PageTable as usize);
         let vpn = VirtualPageNumber::floor(va);
         let mut entry = &root_table.entries[vpn.levels()[0]];
         // 为了支持大页的查找，我们用 length 表示查找到的物理页需要加多少位的偏移

@@ -2,13 +2,13 @@ use riscv::register::{sie, sstatus, time};
 
 use crate::sbi::set_timer;
 
-static INTERVAL: usize = 10_0000;
+static INTERVAL: usize = 100000;
 pub static mut TICKS: usize = 0;
 
 pub fn init() {
     unsafe {
         sie::set_stimer();
-        sstatus::set_sie();
+        // sstatus::set_sie();
     }
 
     set_next_timeout();
@@ -22,8 +22,6 @@ pub fn tick() {
     set_next_timeout();
     unsafe {
         TICKS += 1;
-        if TICKS % 100 == 0 {
-            println!("100 ticks");
-        }
+            println!("{} ticks", TICKS);
     }
 }

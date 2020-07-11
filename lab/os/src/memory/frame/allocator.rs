@@ -34,7 +34,7 @@ impl<T: Allocator> FrameAllocator<T> {
         self.allocator
             .alloc()
             .ok_or("no available frame to allocator")
-            .map(|offset| FrameTracker(PhysicalAddress::from(self.start_ppn + offset)))
+            .map(|offset| FrameTracker(self.start_ppn + offset))
     }
 
     pub fn dealloc(&mut self, frame: &FrameTracker) {

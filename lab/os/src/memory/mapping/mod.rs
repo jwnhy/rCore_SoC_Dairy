@@ -66,5 +66,7 @@ pub fn new_kernel() -> MemoryResult<MemorySet> {
 
     let mut mapping = Mapping::new()?;
     let mut allocated_pairs = Vec::new();
-    Ok(MemorySet { mapping, segments, allocated_pairs })
+    let mut memory_set = MemorySet { mapping, segments, allocated_pairs };
+    memory_set.map()?;
+    Ok(memory_set)
 }

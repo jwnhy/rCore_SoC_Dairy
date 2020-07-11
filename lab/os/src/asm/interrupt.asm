@@ -9,13 +9,14 @@
     .global __interrupt
 
 __interrupt:
+    # swap(sp, sscratch)
+    csrrw   sp, sscratch, sp
     # stack = stack - 34 * 8
     addi    sp, sp, -34 * 8
     # stack[1] = x1
     SAVE    x1, 1
-    # x1 = stack + 34 * 8
-    addi    x1, sp, 34 * 8
-    # stack[2] = x1 = stack + 34 * 8 (original stack pointer)
+    # stack[2] = sscratch
+    csrr    x1, sscratch
     SAVE    x1, 2
     # stack[n] = xn, n = 3 ~ 31
     SAVE    x3, 3
@@ -69,11 +70,15 @@ __restore:
     # stack = &context
     mv      sp, a0
     # sstatus = stack[32]
-    LOAD    s1, 32
-    csrw    sstatus, s1
+    LOAD    t0, 32
+    csrw    sstatus, t0
     # sepc = stack[33]
-    LOAD    s2, 33
-    csrw    sepc, s2
+    LOAD    t1, 33
+    csrw    sepc, t1
+
+    # sscratch = stack[top]
+    addi    t0, sp, 34 * 8
+    csrw    sscratch, t0
 
     # xn = stack[n], n != 2, n = 1 ~ 31
     LOAD    x1, 1

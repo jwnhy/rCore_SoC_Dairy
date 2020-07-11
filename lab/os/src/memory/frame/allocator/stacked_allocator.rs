@@ -16,6 +16,7 @@ impl Allocator for StackedAllocator {
     fn alloc(&mut self) -> Option<usize> {
         if let Some((start, end)) = self.list.pop() {
             if end - start > 1 {
+                // println!("frame ({}, {}) allocated", start, end);
                 self.list.push((start + 1, end));
             }
             return Some(start);
@@ -24,6 +25,7 @@ impl Allocator for StackedAllocator {
     }
 
     fn dealloc(&mut self, index: usize) {
+        println!("frame ({}, {}) deallocated", index, index+1);
         self.list.push((index, index + 1))
     }
 }

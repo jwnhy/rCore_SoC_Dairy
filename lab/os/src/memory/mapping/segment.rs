@@ -22,7 +22,7 @@ impl Segment {
     }
     pub fn page_range(&self) -> Range<VirtualPageNumber> {
         Range::from(
-            VirtualPageNumber::floor(self.range.start..VirtualPageNumber::ceil(self.range.end))
+            VirtualPageNumber::floor(self.range.start)..VirtualPageNumber::ceil(self.range.end),
         )
     }
 }

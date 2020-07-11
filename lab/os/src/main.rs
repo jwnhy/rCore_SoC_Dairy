@@ -8,44 +8,38 @@ extern crate alloc;
 use os::interrupt;
 use os::memory;
 use os::println;
+use os::process::process::Process;
+use os::process::processor::PROCESSOR;
+use os::process::thread::Thread;
+use os::memory::mapping::{new_kernel, Flags};
+use os::process::config::STACK_SIZE;
+use core::mem::size_of;
+use os::interrupt::context::Context;
+
 global_asm!(include_str!("asm/entry.asm"));
 
 #[no_mangle]
 pub extern "C" fn rust_main() -> ! {
-    interrupt::init();
-    memory::init();
+    let memory_set = memory::init();
+    crate::interrupt::init();
 
-    unsafe {
-        llvm_asm!("ebreak"::::"volatile");
-    }
+    let process = Process::new_kernel().unwrap();
 
-    use alloc::boxed::Box;
-    use alloc::vec::Vec;
-
-    // 动态内存分配测试
-    let v = Box::new(5);
-    assert_eq!(*v, 5);
-    let mut vec = Vec::new();
-    for i in 0..10000 {
-        vec.push(i);
+    for message in 0..8 {
+        let thread = Thread::new(
+            process.clone(),            // 使用同一个进程
+            sample_process as usize,    // 入口函数
+            Some(&[message]),           // 参数
+        ).unwrap();
+        PROCESSOR.get().add_thread(thread);
     }
-    for i in 0..10000 {
-        assert_eq!(vec[i], i);
-    }
-    println!("heap test passed");
-
-    use crate::memory::frame::allocator::FRAME_ALLOCATOR;
-    for _ in 0..2 {
-        let frame_0 = match FRAME_ALLOCATOR.lock().alloc() {
-            Result::Ok(frame_tracker) => frame_tracker,
-            Result::Err(err) => panic!("{}", err)
-        };
-        let frame_1 = match FRAME_ALLOCATOR.lock().alloc() {
-            Result::Ok(frame_tracker) => frame_tracker,
-            Result::Err(err) => panic!("{}", err)
-        };
-        println!("{} and {}", frame_0.address(), frame_1.address());
-    }
+    PROCESSOR.get().run();
 
     loop {}
+}
+
+fn sample_process(message: usize) {
+    loop {
+        println!("thread {}", message);
+    }
 }

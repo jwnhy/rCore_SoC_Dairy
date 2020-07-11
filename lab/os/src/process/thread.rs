@@ -1,21 +1,26 @@
+use alloc::sync::Arc;
+use core::hash::{Hash, Hasher};
+use core::mem::size_of;
+
 use lazy_static::lazy_static;
 use spin::{Mutex, RwLock};
-use crate::memory::address::VirtualAddress;
-use crate::memory::range::Range;
-use alloc::sync::Arc;
-use crate::interrupt::context::Context;
-use crate::process::process::Process;
-use crate::process::kernel_stack::{KernelStack, KERNEL_STACK};
-use core::mem::size_of;
-use crate::memory::MemoryResult;
-use crate::process::config::STACK_SIZE;
-use crate::memory::mapping::Flags;
-use core::hash::{Hash, Hasher};
 
+use crate::interrupt::context::Context;
+use crate::memory::address::VirtualAddress;
+use crate::memory::mapping::{Flags, new_kernel};
+use crate::memory::mapping::mapping::Mapping;
+use crate::memory::MemoryResult;
+use crate::memory::range::Range;
+use crate::process::config::STACK_SIZE;
+use crate::process::kernel_stack::{KERNEL_STACK, KernelStack};
+use crate::process::process::Process;
+use crate::test::kernel_memory_check::kernel_memory_check;
 
 pub type ThreadID = isize;
+
 static mut THREAD_COUNTER: ThreadID = 0;
 
+#[derive(Debug)]
 pub struct Thread {
     pub id: ThreadID,
     pub stack: Range<VirtualAddress>,
@@ -23,6 +28,7 @@ pub struct Thread {
     pub inner: Mutex<ThreadInner>,
 }
 
+#[derive(Debug)]
 pub struct ThreadInner {
     pub context: Option<Context>,
     pub sleeping: bool,
@@ -34,7 +40,6 @@ impl Thread {
     }
 
     pub fn prepare(&self) -> *mut Context {
-        self.process.write().memory_set.map();
         self.process.read().memory_set.flush();
         let parked_frame = self.inner().context.take().unwrap();
 
@@ -57,12 +62,13 @@ impl Thread {
         entry_point: usize,
         arguments: Option<&[usize]>,
     ) -> MemoryResult<Arc<Thread>> {
-        let stack = process.write().alloc_page_range(STACK_SIZE, Flags::READABLE | Flags::WRITALBE)?;
+
+        let stack = process.write().alloc_page_range(STACK_SIZE, Flags::READABLE | Flags::WRITABLE)?;
         let context = Context::new(
             stack.end.into(),
             entry_point,
             arguments,
-            process.read().is_user
+            process.read().is_user,
         );
         let thread = Arc::new(Thread {
             id: unsafe {
@@ -76,7 +82,7 @@ impl Thread {
                     context: Some(context),
                     sleeping: false,
                 }
-            )
+            ),
         });
         Ok(thread)
     }

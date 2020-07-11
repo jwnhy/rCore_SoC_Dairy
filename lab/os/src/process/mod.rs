@@ -1,3 +1,4 @@
+pub mod unsafe_wrapper;
 pub mod scheduler;
 pub mod processor;
 pub mod config;
