@@ -16,3 +16,7 @@ This is the self-learning dairy of OS Tutorial Summer of Code hosted by THU.
 
 - day11：暂停，需要准备保研夏令营面试，等面试完继续更新。
 
+- [day12](https://github.com/JohnWestonNull/rCore_SoC_Dairy/blob/master/entry/day12.md)
+- [day13](https://github.com/JohnWestonNull/rCore_SoC_Dairy/blob/master/entry/day13.md)
+- [day14](https://github.com/JohnWestonNull/rCore_SoC_Dairy/blob/master/entry/day14.md)
+
