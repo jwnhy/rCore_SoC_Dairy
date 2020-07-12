@@ -10,13 +10,15 @@
 
 __interrupt:
     # swap(sp, sscratch)
-    csrrw   sp, sscratch, sp
+    # csrrw   sp, sscratch, sp
     # stack = stack - 34 * 8
     addi    sp, sp, -34 * 8
     # stack[1] = x1
     SAVE    x1, 1
     # stack[2] = sscratch
-    csrr    x1, sscratch
+    # csrr    x1, sscratch
+    # SAVE    x1, 2
+    addi    x1, sp, 34 * 8
     SAVE    x1, 2
     # stack[n] = xn, n = 3 ~ 31
     SAVE    x3, 3
