@@ -43,13 +43,8 @@ impl Thread {
         self.process.read().memory_set.flush();
         let parked_frame = self.inner().context.take().unwrap();
 
-        if self.process.read().is_user {
-            KERNEL_STACK.push_context(parked_frame)
-        } else {
-            let context = (parked_frame.sp() - size_of::<Context>()) as *mut Context;
-            unsafe { *context = parked_frame }
-            context
-        }
+        KERNEL_STACK.push_context(parked_frame)
+
     }
 
     pub fn park(&self, context: Context) {
