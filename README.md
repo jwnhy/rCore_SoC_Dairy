@@ -22,3 +22,7 @@ This is the self-learning dairy of OS Tutorial Summer of Code hosted by THU.
 - [day15](https://github.com/JohnWestonNull/rCore_SoC_Dairy/blob/master/entry/day15.md)
 - [day16-学习经验分享](https://github.com/JohnWestonNull/rCore_SoC_Dairy/blob/master/entry/day16.md)
 - day17：暂停，学校说要搬迁寝室，烦躁，唉。
+- [day18](https://github.com/JohnWestonNull/rCore_SoC_Dairy/blob/master/entry/day18.md)
+- [**day19**-lab4完成](https://github.com/JohnWestonNull/rCore_SoC_Dairy/blob/master/entry/day19.md)
+- [day20](https://github.com/JohnWestonNull/rCore_SoC_Dairy/blob/master/entry/day20.md)
+- [day21](https://github.com/JohnWestonNull/rCore_SoC_Dairy/blob/master/entry/day21.md)
