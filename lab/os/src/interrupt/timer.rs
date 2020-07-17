@@ -2,7 +2,7 @@ use riscv::register::{sie, sstatus, time};
 
 use crate::sbi::set_timer;
 
-static INTERVAL: usize = 10000000;
+static INTERVAL: usize = 1000000;
 pub static mut TICKS: usize = 0;
 
 pub fn init() {
