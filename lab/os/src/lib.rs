@@ -17,3 +17,7 @@ pub mod interrupt;
 pub mod memory;
 pub mod test;
 pub mod process;
+pub mod drivers;
+pub mod fs;
+mod kernel;
+

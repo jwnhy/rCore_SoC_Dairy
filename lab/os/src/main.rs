@@ -11,18 +11,22 @@ use os::interrupt;
 use os::interrupt::context::Context;
 use os::memory;
 use os::memory::mapping::{Flags, new_kernel};
+use os::memory::config::KERNEL_END_ADDRESS;
 use os::println;
 use os::process::config::STACK_SIZE;
 use os::process::process::Process;
 use os::process::processor::PROCESSOR;
 use os::process::thread::Thread;
+use os::memory::address::PhysicalAddress;
 
 global_asm!(include_str!("asm/entry.asm"));
 
 #[no_mangle]
-pub extern "C" fn rust_main() -> ! {
+pub extern "C" fn rust_main(_hart_id: usize, dtb_pa: PhysicalAddress) -> ! {
     let memory_set = memory::init();
     crate::interrupt::init();
+    println!("{:x?}", dtb_pa);
+    println!("{:x?}", PhysicalAddress::from(*KERNEL_END_ADDRESS));
 
     let process = Process::new_kernel().unwrap();
 

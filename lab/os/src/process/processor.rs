@@ -65,17 +65,20 @@ impl Processor {
         self.scheduler.add_thread(thread, 0);
     }
 
-    // pub fn prepare_next_thread(&mut self) -> *mut Context {
-    //     loop {
-    //         if let Some(next_thread) = self.scheduler.get_next() {
-    //             let context = next_thread.prepare();
-    //             self.current_thread = Some(next_thread)
-    //             return context;
-    //         } else {
-    //             if self.sleeping_threads.is_empty() {
-    //                 panic!()
-    //             }
-    //         }
-    //     }
-    // }
+    pub fn current_thread(&self) -> Arc<Thread> {
+        self.current_thread.as_ref().unwrap().clone()
+    }
+
+    pub fn sleep_current_thread(&mut self) {
+        let current_thread = self.current_thread();
+        current_thread.inner.lock().sleeping = true;
+        self.scheduler.remove_thread(&current_thread);
+        self.sleeping_threads.insert(current_thread);
+    }
+
+    pub fn wake_thread(&mut self, thread: Arc<Thread>) {
+        thread.inner.lock().sleeping = false;
+        self.sleeping_threads.remove(&thread);
+        self.scheduler.add_thread(thread, 0);
+    }
 }
